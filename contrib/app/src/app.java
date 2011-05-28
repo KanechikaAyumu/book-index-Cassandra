@@ -77,7 +77,7 @@ public class app extends Configured implements Tool
 
     public static class TokenizerMapper extends Mapper<ByteBuffer, SortedMap<ByteBuffer, IColumn>, Text, IntWritable>
     {
-        private final static IntWritable one = new IntWritable(1);
+        private  static IntWritable one = new IntWritable(1);
         private Text word = new Text();
         private ByteBuffer sourceColumn;
 
@@ -133,17 +133,24 @@ public class app extends Configured implements Tool
 
         public void reduce(Text word, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
         {
-            int sum = 0;
-            for (IntWritable val : values)
-                sum += val.get();
+            String  sum = null;
+            ArrayList Listsort = new ArrayList();
+            for (IntWritable val : values){
+		Listsort.add(val.get());
+	    }
+            sum=String.valueOf(Listsort.get(0));
+            for(int i=1;i<Listsort.size();i++){
+               sum+=","+String.valueOf(Listsort.get(i));
+            }
             context.write(outputKey, Collections.singletonList(getMutation(word, sum)));
         }
 
-        private static Mutation getMutation(Text word, int sum)
+        private static Mutation getMutation(Text word, String sum)
         {
             Column c = new Column();
             c.name = ByteBuffer.wrap(Arrays.copyOf(word.getBytes(), word.getLength()));
-            c.value = ByteBuffer.wrap(String.valueOf(sum).getBytes());
+//            c.value = ByteBuffer.wrap(String.valueOf(sum).getBytes());
+	    c.value = ByteBuffer.wrap(sum.getBytes());			
             c.timestamp = System.currentTimeMillis() * 1000;
 
             Mutation m = new Mutation();
