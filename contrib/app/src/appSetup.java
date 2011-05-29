@@ -78,8 +78,8 @@ try{
 */
 String string;
 for(int i=0;i<TEST_COUNT;i++){
-string = Integer.toString(i);
-readtext(string + ".txt");
+string = i + ".txt";
+readtext(string);
 
         // text1: 1 row, 1 word
         c = new Column(ByteBufferUtil.bytes("2008LNCS/"+ string), ByteBufferUtil.bytes(total), System.currentTimeMillis());
