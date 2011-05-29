@@ -101,7 +101,7 @@ public class StorageProxy implements StorageProxyMBean
 
 //Change
 //	in_timestamp();
-stamp("mutations");
+//stamp("mutations");
 //**********************
         long startTime = System.nanoTime();
         List<IWriteResponseHandler> responseHandlers = new ArrayList<IWriteResponseHandler>();
@@ -213,7 +213,7 @@ stamp("mutations");
     private static void sendMessages(String localDataCenter, Map<String, Multimap<Message, InetAddress>> dcMessages, IWriteResponseHandler handler)
     throws IOException
     {
-stamp("sendMessages");
+//stamp("sendMessages");
 //Change**************
 //in_timestamp();
 
@@ -266,7 +266,7 @@ stamp("sendMessages");
     private static void addHintHeader(Message message, InetAddress target) throws IOException
     {
 //Change
-stamp("addHintHeader");
+//stamp("addHintHeader");
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         DataOutputStream dos = new DataOutputStream(bos);
         byte[] previousHints = message.getHeader(RowMutation.HINT);
@@ -294,7 +294,7 @@ stamp("addHintHeader");
      	}
 //**********
 */
-stamp("insertLocal");
+//stamp("insertLocal");
 //	in_timestamp();
         if (logger.isDebugEnabled())
             logger.debug("insert writing local " + rm.toString(true));
@@ -331,7 +331,7 @@ stamp("insertLocal");
         }
 //****************************
 */
-stamp("read");
+//stamp("read");
 //	out_timestamp();
 
         if (StorageService.instance.isBootstrapMode())
@@ -363,7 +363,7 @@ stamp("read");
     private static List<Row> fetchRows(List<ReadCommand> commands, ConsistencyLevel consistency_level) throws IOException, UnavailableException, TimeoutException
     {
 //Change
-stamp("fetchRows");
+//stamp("fetchRows");
         List<ReadCallback<Row>> readCallbacks = new ArrayList<ReadCallback<Row>>();
         List<Row> rows = new ArrayList<Row>();
 
@@ -527,7 +527,7 @@ stamp("fetchRows");
 //***********Change
 //	out_timestamp();
 //*************
-stamp("getRangeSlice");
+//stamp("getRangeSlice");
 
         if (logger.isDebugEnabled())
             logger.debug(command.toString());

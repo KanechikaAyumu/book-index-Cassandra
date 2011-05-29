@@ -60,10 +60,15 @@ import org.apache.cassandra.thrift.IndexOperator;
 import org.apache.cassandra.utils.*;
 
 public class ColumnFamilyStore implements ColumnFamilyStoreMBean
-{
-    private static Logger logger = LoggerFactory.getLogger(ColumnFamilyStore.class);
+{ 
 
-    /*
+//Chnage
+    private static File outFile = new File("/work1/kane/time.txt");
+    private static Logger logger = LoggerFactory.getLogger(ColumnFamilyStore.class);
+    private static long now;
+    private static String s; 
+    private final static long START = System.nanoTime(); 
+  /*
      * submitFlush first puts [Binary]Memtable.getSortedContents on the flushSorter executor,
      * which then puts the sorted results on the writer executor.  This is because sorting is CPU-bound,
      * and writing is disk-bound; we want to be able to do both at once.  When the write is complete,
@@ -807,7 +812,9 @@ public class ColumnFamilyStore implements ColumnFamilyStoreMBean
      * param @ columnFamily - columnFamily changes
      */
     Memtable apply(DecoratedKey key, ColumnFamily columnFamily)
-    {
+    {   
+//Change
+        stamp("Insert");
         long start = System.nanoTime();
 
         boolean flushRequested = memtable.isThresholdViolated();
@@ -1405,7 +1412,9 @@ public class ColumnFamilyStore implements ColumnFamilyStoreMBean
      */
     public List<Row> getRangeSlice(ByteBuffer superColumn, final AbstractBounds range, int maxResults, IFilter columnFilter)
     throws ExecutionException, InterruptedException
-    {
+    {   
+ //Change
+        stamp("Read");
         assert range instanceof Bounds
                || (!((Range)range).isWrapAround() || range.right.equals(StorageService.getPartitioner().getMinimumToken()))
                : range;
@@ -2196,5 +2205,24 @@ public class ColumnFamilyStore implements ColumnFamilyStoreMBean
     public Iterable<ColumnFamilyStore> concatWithIndexes()
     {
         return Iterables.concat(Collections.singleton(this), indexedColumns.values());
+    }
+
+
+//Change
+    public static void stamp(String str){
+        try{
+        FileWriter out = new FileWriter(outFile,true);
+        BufferedWriter bw = new BufferedWriter(out);
+        now = System.nanoTime();
+        now = now - START;
+        s = str + ";" + now;
+        bw.write(s);
+//        bw.newLine();
+//        s = Long.toString(START);
+//        bw.write(s);
+        bw.newLine();
+        bw.close();
+        }catch(IOException e){
+        }
     }
 }
