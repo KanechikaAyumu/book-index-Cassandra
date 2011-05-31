@@ -78,12 +78,13 @@ try{
 */
 String string;
 for(int i=0;i<TEST_COUNT;i++){
+String number = Integer.toString(i);
 string = Integer.toString(i);
 readtext(string + ".txt");
 
         // text1: 1 row, 1 word
         c = new Column(ByteBufferUtil.bytes("2008LNCS/"+ string), ByteBufferUtil.bytes(total), System.currentTimeMillis());
-        mutationMap = getMutationMap(ByteBufferUtil.bytes("key" + string), app.COLUMN_FAMILY, c);
+        mutationMap = getMutationMap(ByteBufferUtil.bytes("key" + number), app.COLUMN_FAMILY, c);
         client.batch_mutate(mutationMap, ConsistencyLevel.ONE);
         logger.info("added text" + string );
 }
