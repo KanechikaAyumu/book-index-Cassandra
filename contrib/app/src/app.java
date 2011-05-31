@@ -100,8 +100,8 @@ public class app extends Configured implements Tool
             StringTokenizer itr = new StringTokenizer(value);
             while (itr.hasMoreTokens())
             {
-			instant++;
-			one = new IntWritable(instant);
+		instant++;
+		one = new IntWritable(instant);
                 word.set(itr.nextToken());
                 context.write(word, one);
 	//	counter.increment(1);
