@@ -67,9 +67,7 @@ public class app extends Configured implements Tool
 
     private static final String CONF_COLUMN_NAME = "columnname";
 
-//Chnage    
-    private static String[] Split = new String[2];
-    private static int instant = 0;
+	private static int instant = 0;
     public static void main(String[] args) throws Exception
     {
         // Let ToolRunner handle generic command-line options
@@ -102,8 +100,6 @@ public class app extends Configured implements Tool
             StringTokenizer itr = new StringTokenizer(value);
             while (itr.hasMoreTokens())
             {
-
-				
 			instant++;
 			one = new IntWritable(instant);
                 word.set(itr.nextToken());
