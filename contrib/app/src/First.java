@@ -54,9 +54,9 @@ import org.apache.hadoop.util.ToolRunner;
  * When outputting to Cassandra, we write the word counts as a {word, count} column/value pair,
  * with a row key equal to the name of the source column we read the words from.
  */
-public class app extends Configured implements Tool
+public class First extends Configured implements Tool
 {
-    private static final Logger logger = LoggerFactory.getLogger(app.class);
+    private static final Logger logger = LoggerFactory.getLogger(First.class);
 
     static final String KEYSPACE = "app";
     static final String COLUMN_FAMILY = "input_words";
@@ -71,7 +71,7 @@ public class app extends Configured implements Tool
     public static void main(String[] args) throws Exception
     {
         // Let ToolRunner handle generic command-line options
-        ToolRunner.run(new Configuration(), new app(), args);
+        ToolRunner.run(new Configuration(), new First(), args);
         System.exit(0);
     }
 
@@ -173,11 +173,11 @@ public class app extends Configured implements Tool
 
         for (int i = 0; i < appSetup.TEST_COUNT; i++)
         {
-            String columnName = "wiki/" + i;
+            String columnName = "2008LNCS/" + i;
             getConf().set(CONF_COLUMN_NAME, columnName);
 
             Job job = new Job(getConf(), "app");
-            job.setJarByClass(app.class);
+            job.setJarByClass(First.class);
             job.setMapperClass(TokenizerMapper.class);
 
             if (outputReducerType.equalsIgnoreCase("filesystem"))

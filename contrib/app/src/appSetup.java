@@ -76,18 +76,18 @@ try{
       System.out.println(e);
     }
 */
-String string;
-for(int i=0;i<TEST_COUNT;i++){
-String number = Integer.toString(i);
-string = Integer.toString(i);
-readtext(string + ".txt");
+//String string;
+//for(int i=0;i<TEST_COUNT;i++){
+String number = Integer.toString(0);
+//string = Integer.toString(i);
+readtext("");
 
         // text1: 1 row, 1 word
-        c = new Column(ByteBufferUtil.bytes("2008LNCS/"+ string), ByteBufferUtil.bytes(total), System.currentTimeMillis());
+        c = new Column(ByteBufferUtil.bytes("wiki/"+ number), ByteBufferUtil.bytes(total), System.currentTimeMillis());
         mutationMap = getMutationMap(ByteBufferUtil.bytes("key" + number), app.COLUMN_FAMILY, c);
         client.batch_mutate(mutationMap, ConsistencyLevel.ONE);
-        logger.info("added text" + string );
-}
+        logger.info("added text" + number );
+//}
 /*
 readtext("4.txt");
         // text1: 1 row, 2 word
@@ -159,13 +159,14 @@ readtext("4.txt");
 	private static void readtext(String dir){
 	total="";
 	try{
-      File file = new File("/home/kane/text/2008LNCS/"+dir);
+      File file = new File("/work1/kane/2enwiki-latest-pages-articles1.xml"+dir);
 
       if (checkBeforeReadfile(file)){
         BufferedReader br = new BufferedReader(new FileReader(file));
 
         String str;
         while((str = br.readLine()) != null){
+                str = str.replaceAll("[\\W&&[^\\s<>]]","");
                 total += str;
         }
         System.out.println(total);
