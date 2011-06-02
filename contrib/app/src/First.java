@@ -59,10 +59,10 @@ public class First extends Configured implements Tool
     private static final Logger logger = LoggerFactory.getLogger(First.class);
 
     static final String KEYSPACE = "app";
-    static final String COLUMN_FAMILY = "input_words";
+    static final String COLUMN_FAMILY = "output_words";
 
     static final String OUTPUT_REDUCER_VAR = "output_reducer";
-    static final String OUTPUT_COLUMN_FAMILY = "output_words";
+    static final String OUTPUT_COLUMN_FAMILY = "First";
     private static final String OUTPUT_PATH_PREFIX = "/work1/kane/tmp/app";
 
     private static final String CONF_COLUMN_NAME = "columnname";
@@ -171,9 +171,9 @@ public class First extends Configured implements Tool
         }
         logger.info("output reducer type: " + outputReducerType);
 
-        for (int i = 0; i < appSetup.TEST_COUNT; i++)
+        for (int i = 2000; i < 2012; i++)
         {
-            String columnName = "2008LNCS/" + i;
+            String columnName = Integer.toString(i);
             getConf().set(CONF_COLUMN_NAME, columnName);
 
             Job job = new Job(getConf(), "app");

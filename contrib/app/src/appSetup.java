@@ -174,6 +174,11 @@ readtext("4.txt");
        output.setComparator_type("AsciiType");
        output.setDefault_validation_class("AsciiType");
         cfDefList.add(output);
+        CfDef First = new CfDef(app.KEYSPACE, app.COLUMN_FAMILY);
+       First.setComparator_type("AsciiType");
+       First.setDefault_validation_class("AsciiType");
+       cfDefList.add(First);
+
 
         client.system_add_keyspace(new KsDef(app.KEYSPACE, "org.apache.cassandra.locator.SimpleStrategy", 1, cfDefList));
         int magnitude = client.describe_ring(app.KEYSPACE).size();

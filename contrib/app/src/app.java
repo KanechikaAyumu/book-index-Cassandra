@@ -98,10 +98,35 @@ public class app extends Configured implements Tool
                 return;
             String value = ByteBufferUtil.string(column.value());
             logger.debug("read " + key + ":" + value + " from " + context.getInputSplit());
-
+            String total="";
+            String str;
             StringTokenizer itr = new StringTokenizer(value);
-            while (itr.hasMoreTokens())
-            {
+                  while (itr.hasMoreTokens())
+                      { 
+                        str = itr.nextToken();
+                        if(str.matches("<title>.*")){
+                        total ="/"+str.replaceAll("<.*?>",""); 
+                        break;
+                        }
+			}
+		while (itr.hasMoreTokens())
+                      {
+                        str = itr.nextToken();
+                        if(str.matches("<timestamp>.*")){
+                        total +="/"+str.replaceAll("<.*?>","").substring(0,4);
+                        break;
+                        }
+                        }
+
+/*                  while (!((str = itr.nextToken() ).matches("<timestamp>.*"))&&itr.hasMoreTokens())
+                      { 
+                        total +="/"+str.replaceAll("<.*?>","");
+                        }
+                  while (!((str = itr.nextToken() ).matches("<text.*"))&&itr.hasMoreTokens())
+                      {    
+                        }*/
+             while (itr.hasMoreTokens())
+            { 
 
 /*                str = itr.nextToken();
                 if(str.matches(".*<title>.*")||str.matches(".*<timestamp>.*")){
@@ -113,10 +138,11 @@ public class app extends Configured implements Tool
 //                if(str.matches(".*<text.*")){
                 
 //                }
-	       	instant++;
-		one = new IntWritable(instant);
-              word.set(itr.nextToken());
-              context.write(word,one);
+//	       	instant++;
+//		one = new IntWritable(instant);
+                str = itr.nextToken().replaceAll("/","") + total;
+                word.set(str);
+                context.write(word,one);
 /*                if(text){
                 word.set(total);
                 total ="";
@@ -200,7 +226,7 @@ public class app extends Configured implements Tool
 
         public void reduce(Text word, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
         {
-            String  sum = null;
+/*            String  sum = null;
             ArrayList Listsort = new ArrayList();
             for (IntWritable val : values){
 		Listsort.add(val.get());
@@ -208,8 +234,18 @@ public class app extends Configured implements Tool
             sum=String.valueOf(Listsort.get(0));
             for(int i=1;i<Listsort.size();i++){
                sum+=","+String.valueOf(Listsort.get(i));
-            }
-            context.write(outputKey, Collections.singletonList(getMutation(word, sum)));
+            }*/
+             int sum = 0;
+            for (IntWritable val : values)
+                  sum += val.get();
+            Random r = new Random();
+            String str = "key" + r.nextInt(100);
+            outputKey =  ByteBuffer.wrap(str.getBytes());
+              str = word.toString();     
+            String[] strs = str.split("/");
+              String value = strs[0]+"/"+strs[1]+"/"+sum;
+              word.set(strs[2]);   
+            context.write(outputKey, Collections.singletonList(getMutation(word, value)));
         }
 
         private static Mutation getMutation(Text word, String sum)
@@ -238,8 +274,8 @@ public class app extends Configured implements Tool
         }
         logger.info("output reducer type: " + outputReducerType);
 
-        for (int i = 0; i < appSetup.TEST_COUNT; i++)
-        {
+//        for (int i = 0; i < appSetup.TEST_COUNT; i++)
+//        {
 //            String columnName = "wiki/" + i;
             String columnName = "wiki";
             getConf().set(CONF_COLUMN_NAME, columnName);
@@ -254,7 +290,7 @@ public class app extends Configured implements Tool
                 job.setReducerClass(ReducerToFilesystem.class);
                 job.setOutputKeyClass(Text.class);
                 job.setOutputValueClass(IntWritable.class);
-                FileOutputFormat.setOutputPath(job, new Path(OUTPUT_PATH_PREFIX + i));
+//                FileOutputFormat.setOutputPath(job, new Path(OUTPUT_PATH_PREFIX + i));
             }
             else
             {
@@ -281,7 +317,7 @@ public class app extends Configured implements Tool
             ConfigHelper.setInputSlicePredicate(job.getConfiguration(), predicate);
 
             job.waitForCompletion(true);
-        }
+//        }
         return 0;
     }
 }
