@@ -66,8 +66,10 @@ public class app extends Configured implements Tool
     private static final String OUTPUT_PATH_PREFIX = "/work1/kane/tmp/app";
 
     private static final String CONF_COLUMN_NAME = "columnname";
-
-	private static int instant = 0;
+    private static String str;
+    private static String total="";
+    private static boolean text = false;
+    private static int instant = 0;
     public static void main(String[] args) throws Exception
     {
         // Let ToolRunner handle generic command-line options
@@ -100,15 +102,80 @@ public class app extends Configured implements Tool
             StringTokenizer itr = new StringTokenizer(value);
             while (itr.hasMoreTokens())
             {
-		instant++;
+
+/*                str = itr.nextToken();
+                if(str.matches(".*<title>.*")||str.matches(".*<timestamp>.*")){
+                total+=str;
+                }else if(str.matches(".*<username>.*")){
+                total+=str;
+                text = true;
+                } */ 
+//                if(str.matches(".*<text.*")){
+                
+//                }
+	       	instant++;
 		one = new IntWritable(instant);
-                word.set(itr.nextToken());
+              word.set(itr.nextToken());
+              context.write(word,one);
+/*                if(text){
+                word.set(total);
+                total ="";
                 context.write(word, one);
+                text = false;
+                }*/
 	//	counter.increment(1);
 	//	counter.increment(1);
             }
         }
     }
+
+   private static void print(String word){
+       if(str.matches(".*<" + word + ">.*")){
+         str = str.replaceAll("<.*?>","");
+         str = str.trim();
+         if(word.equals("title")){
+         total =str;
+         }
+         else if(word.equals("username")){
+         total +="/"+str;
+         System.out.println(total);
+         text=true;
+         }
+         else{
+         total += "/"+str;
+         }
+
+       }
+  }
+
+  private static void textprint(){
+       if(str.matches(".*<text.*") && str.matches(".*</text>.*")){
+         str = str.replaceFirst("<text.*>","");
+         str = str.replaceFirst("</text>","");
+         str = str.trim();
+         total = str;
+         System.out.println(total);
+         text=false;
+       }
+       else if(str.matches(".*<text.*")){
+       str = str.replaceFirst("<text.*>","");
+       str = str.trim();
+       total = str;
+       }
+       else if(str.matches(".*</text>.*")){
+       str = str.replaceFirst("</text>","");
+       str = str.trim();
+       total += str;
+       System.out.println(total);
+       text=false;
+       }
+       else{
+       total +=str;
+       }
+  }
+
+
+
 
     public static class ReducerToFilesystem extends Reducer<Text, IntWritable, Text, IntWritable>
     {
@@ -173,7 +240,8 @@ public class app extends Configured implements Tool
 
         for (int i = 0; i < appSetup.TEST_COUNT; i++)
         {
-            String columnName = "wiki/" + i;
+//            String columnName = "wiki/" + i;
+            String columnName = "wiki";
             getConf().set(CONF_COLUMN_NAME, columnName);
 
             Job job = new Job(getConf(), "app");

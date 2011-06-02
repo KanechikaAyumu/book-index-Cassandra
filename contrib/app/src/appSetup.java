@@ -78,15 +78,47 @@ try{
 */
 //String string;
 //for(int i=0;i<TEST_COUNT;i++){
-String number = Integer.toString(0);
+        int i = 0;
+	String number = Integer.toString(0);
 //string = Integer.toString(i);
-readtext("");
+//readtext("");
+	
+	 total="";
+        try{
+	      File file = new File("/work1/kane/2enwiki-latest-pages-articles1.xml");
 
+	      if (checkBeforeReadfile(file)){
+	        BufferedReader br = new BufferedReader(new FileReader(file));
+
+	       String str;
+	       	 while((str = br.readLine()) != null){
+        	        str = str.replaceAll("[\\W&&[^\\s<>/]]","");
+        	       	 total += str;
+                         if(str.matches(".*</page>.*")){
+                                number = Integer.toString(i);
+				c = new Column(ByteBufferUtil.bytes("wiki"), ByteBufferUtil.bytes(total), System.currentTimeMillis());
+   	 		        mutationMap = getMutationMap(ByteBufferUtil.bytes("key" + number), app.COLUMN_FAMILY, c);
+ 			        client.batch_mutate(mutationMap, ConsistencyLevel.ONE);
+			        logger.info("added text" + number );
+                                i++;
+                                total="";
+                         }
+  	      }
+//      	  System.out.println(total);
+      	  br.close();
+     	 }else{
+    	   	 System.out.println("no file");
+     	 }
+   	  }catch(FileNotFoundException e){
+ 		     System.out.println(e);
+	    }catch(IOException e){
+     	 System.out.println(e);
+  	  } 
         // text1: 1 row, 1 word
-        c = new Column(ByteBufferUtil.bytes("wiki/"+ number), ByteBufferUtil.bytes(total), System.currentTimeMillis());
+/*        c = new Column(ByteBufferUtil.bytes("wiki/"+ number), ByteBufferUtil.bytes(total), System.currentTimeMillis());
         mutationMap = getMutationMap(ByteBufferUtil.bytes("key" + number), app.COLUMN_FAMILY, c);
         client.batch_mutate(mutationMap, ConsistencyLevel.ONE);
-        logger.info("added text" + number );
+        logger.info("added text" + number );*/
 //}
 /*
 readtext("4.txt");
