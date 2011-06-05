@@ -99,21 +99,24 @@ public class app extends Configured implements Tool
             String value = ByteBufferUtil.string(column.value());
             logger.debug("read " + key + ":" + value + " from " + context.getInputSplit());
             String total="";
-            String str;
+            String str="" ;
+            String title="";
             StringTokenizer itr = new StringTokenizer(value);
                   while (itr.hasMoreTokens())
                       { 
                         str = itr.nextToken();
                         if(str.matches("<title>.*")){
                         total ="/"+str.replaceAll("<.*?>",""); 
+                        title = total;
                         break;
                         }
 			}
+               while(itr.hasMoreTokens()){
 		while (itr.hasMoreTokens())
                       {
                         str = itr.nextToken();
                         if(str.matches("<timestamp>.*")){
-                        total +="/"+str.replaceAll("<.*?>","").substring(0,4);
+                        total = title +"/"+str.replaceAll("<.*?>","").substring(0,4);
                         break;
                         }
                         }
@@ -125,8 +128,15 @@ public class app extends Configured implements Tool
                   while (!((str = itr.nextToken() ).matches("<text.*"))&&itr.hasMoreTokens())
                       {    
                         }*/
-             while (itr.hasMoreTokens())
-            { 
+                    while (itr.hasMoreTokens())
+                      { 
+                        str = itr.nextToken();
+                        if(str.matches("<text.*")){
+//                        str = str.replaceAll("<.*?>","");
+                        break;
+                        }
+                        }
+
 
 /*                str = itr.nextToken();
                 if(str.matches(".*<title>.*")||str.matches(".*<timestamp>.*")){
@@ -140,9 +150,40 @@ public class app extends Configured implements Tool
 //                }
 //	       	instant++;
 //		one = new IntWritable(instant);
-                str = itr.nextToken().replaceAll("/","") + total;
+                
+                 if(!str.matches(".*</text>.*")){
+                 str = str.replaceAll("<.*?>","");
+                 str = str.replaceAll("/","") + total;
+                 word.set(str);
+                 context.write(word,one);
+
+                while (itr.hasMoreTokens())
+                      { 
+                str = itr.nextToken();
+                if(str.matches(".*</text>.*")){
+                str = str.replaceAll("<.*?>","");
+                str = str.replaceAll("/","") + total;
                 word.set(str);
                 context.write(word,one);
+                break;
+                }
+                else{
+                str = itr.nextToken();
+                str = str.replaceAll("<.*?>","");
+                str=str.replaceAll("/","") + total;
+                word.set(str);
+                context.write(word,one);
+                }
+               }
+               }
+               else{
+               str = str.replaceAll("<.*?>","");
+                str = str.replaceAll("/","") + total;
+                word.set(str);
+                context.write(word,one);
+
+               }
+                
 /*                if(text){
                 word.set(total);
                 total ="";

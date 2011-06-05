@@ -85,8 +85,8 @@ try{
 	
 	 total="";
         try{
-	      File file = new File("/work1/kane/2enwiki-latest-pages-articles1.xml");
-
+//	      File file = new File("/work1/kane/head2000history1.xml");
+              File file = new File("/work1/kane/enwikisource-latest-pages-articles.xml");
 	      if (checkBeforeReadfile(file)){
 	        BufferedReader br = new BufferedReader(new FileReader(file));
 
@@ -174,7 +174,7 @@ readtext("4.txt");
        output.setComparator_type("AsciiType");
        output.setDefault_validation_class("AsciiType");
         cfDefList.add(output);
-        CfDef First = new CfDef(app.KEYSPACE, app.COLUMN_FAMILY);
+        CfDef First = new CfDef("app", "First");
        First.setComparator_type("AsciiType");
        First.setDefault_validation_class("AsciiType");
        cfDefList.add(First);
@@ -196,7 +196,7 @@ readtext("4.txt");
 	private static void readtext(String dir){
 	total="";
 	try{
-      File file = new File("/work1/kane/2enwiki-latest-pages-articles1.xml"+dir);
+      File file = new File("/work1/kane/enwiki-latest-pages-articles1.xml"+dir);
 
       if (checkBeforeReadfile(file)){
         BufferedReader br = new BufferedReader(new FileReader(file));

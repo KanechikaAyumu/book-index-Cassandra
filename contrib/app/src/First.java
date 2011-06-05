@@ -100,9 +100,12 @@ public class First extends Configured implements Tool
             StringTokenizer itr = new StringTokenizer(value);
             while (itr.hasMoreTokens())
             {
-		instant++;
-		one = new IntWritable(instant);
-                word.set(itr.nextToken());
+                String[] s = new String[3];
+                s = itr.nextToken().split("/");
+//		instant++;
+                int i = Integer.parseInt(s[2]);  		
+		one = new IntWritable(i);
+                word.set(s[0]);
                 context.write(word, one);
 	//	counter.increment(1);
 	//	counter.increment(1);
@@ -133,7 +136,7 @@ public class First extends Configured implements Tool
 
         public void reduce(Text word, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
         {
-            String  sum = null;
+/*            String  sum = null;
             ArrayList Listsort = new ArrayList();
             for (IntWritable val : values){
 		Listsort.add(val.get());
@@ -141,16 +144,20 @@ public class First extends Configured implements Tool
             sum=String.valueOf(Listsort.get(0));
             for(int i=1;i<Listsort.size();i++){
                sum+=","+String.valueOf(Listsort.get(i));
-            }
+            }*/
+
+            int sum = 0;
+            for(IntWritable val : values)
+             sum += val.get();
             context.write(outputKey, Collections.singletonList(getMutation(word, sum)));
         }
 
-        private static Mutation getMutation(Text word, String sum)
+        private static Mutation getMutation(Text word, int sum)
         {
             Column c = new Column();
             c.name = ByteBuffer.wrap(Arrays.copyOf(word.getBytes(), word.getLength()));
-//            c.value = ByteBuffer.wrap(String.valueOf(sum).getBytes());
-	    c.value = ByteBuffer.wrap(sum.getBytes());			
+            c.value = ByteBuffer.wrap(String.valueOf(sum).getBytes());
+//	    c.value = ByteBuffer.wrap(sum.getBytes());			
             c.timestamp = System.currentTimeMillis() * 1000;
 
             Mutation m = new Mutation();
